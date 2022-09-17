@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables, avoid_unnecessary_containers
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -18,8 +20,8 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-var carAspectRatio = 12.0 / 16.0;
-var widgetAspectRatio = carAspectRatio * 1.2;
+var cardAspectRatio = 12.0 / 16.0;
+var widgetAspectRatio = cardAspectRatio * 1.2;
 
 class _MyAppState extends State<MyApp> {
   var currentPage = images.length - 1.0;
@@ -157,17 +159,41 @@ class CardScrollWidget extends StatelessWidget {
         var safeHeight = height - 2 * padding;
 
         var heightOfPrimaryCard = safeHeight;
-        var widthtOfPrimaryCard = heightOfPrimaryCard * carAspectRatio;
+        var widthtOfPrimaryCard = heightOfPrimaryCard * cardAspectRatio;
 
         var primaryCardLeft = safeWidth - widthtOfPrimaryCard;
         var horizontalInset = primaryCardLeft / 2;
 
+        List<Widget> cardList = [];
+
         for (var i = 0; i < images.length; i++) {
           var delta = i - currentPage;
+          bool isOnRight = delta > 0;
+
+          var start = padding +
+              max(
+                  primaryCardLeft -
+                      horizontalInset * -delta * (isOnRight ? 15 : 1),
+                  0.0);
 
           var cardItem = Positioned.directional(
-              top: padding + verticalInset * max(-delta, 0.0));
+            top: padding + verticalInset * max(-delta, 0.0),
+            bottom: padding + verticalInset * max(-delta, 0.0),
+            start: start,
+            textDirection: TextDirection.rtl,
+            child: Container(
+              child: AspectRatio(
+                aspectRatio: cardAspectRatio,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [Image.asset(images[i], fit: BoxFit.cover)],
+                ),
+              ),
+            ),
+          );
+          cardList.add(cardItem);
         }
+        return Stack(children: cardList);
       }),
     );
   }
