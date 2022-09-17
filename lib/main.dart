@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+import 'data.dart';
 
 void main() => runApp(
       const MaterialApp(
@@ -14,9 +18,22 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+var carAspectRatio = 12.0 / 16.0;
+var widgetAspectRatio = carAspectRatio * 1.2;
+
 class _MyAppState extends State<MyApp> {
+  var currentPage = images.length - 1.0;
+
   @override
   Widget build(BuildContext context) {
+    PageController controller = PageController(initialPage: images.length - 1);
+    controller.addListener(
+      () {
+        setState(() {
+          currentPage = controller.page!;
+        });
+      },
+    );
     return Scaffold(
       backgroundColor: const Color(0xff2d3447),
       body: SingleChildScrollView(
@@ -99,9 +116,59 @@ class _MyAppState extends State<MyApp> {
                 ],
               ),
             ),
+            Stack(
+              children: [
+                CardScrollWidget(currentPage),
+                Positioned.fill(
+                  child: PageView.builder(
+                    itemCount: images.length,
+                    controller: controller,
+                    reverse: true,
+                    itemBuilder: ((context, index) {
+                      return Container();
+                    }),
+                  ),
+                )
+              ],
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class CardScrollWidget extends StatelessWidget {
+  var currentPage;
+  var padding = 20.0;
+  var verticalInset = 20.0;
+
+  CardScrollWidget(this.currentPage, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: widgetAspectRatio,
+      child: LayoutBuilder(builder: (context, contraints) {
+        var width = contraints.maxWidth;
+        var height = contraints.maxHeight;
+
+        var safeWidth = width - 2 * padding;
+        var safeHeight = height - 2 * padding;
+
+        var heightOfPrimaryCard = safeHeight;
+        var widthtOfPrimaryCard = heightOfPrimaryCard * carAspectRatio;
+
+        var primaryCardLeft = safeWidth - widthtOfPrimaryCard;
+        var horizontalInset = primaryCardLeft / 2;
+
+        for (var i = 0; i < images.length; i++) {
+          var delta = i - currentPage;
+
+          var cardItem = Positioned.directional(
+              top: padding + verticalInset * max(-delta, 0.0));
+        }
+      }),
     );
   }
 }

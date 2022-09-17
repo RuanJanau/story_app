@@ -1,8 +1,8 @@
 List<String> images = [
-  "assets/image_04.jpg",
-  "assets/image_03.jpg",
-  "assets/image_02.jpg",
-  "assets/image_01.jpg",
+  "assets/image/04.jpg",
+  "assets/image/03.jpg",
+  "assets/image/02.jpg",
+  "assets/image/01.jpg",
 ];
 List<String> title = [
   "Hounted Ground",
